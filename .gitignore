@@ -1,0 +1,4 @@
+calculator
+*.exe
+*.o
+build/
