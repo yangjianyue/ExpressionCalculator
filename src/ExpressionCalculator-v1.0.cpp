@@ -28,9 +28,6 @@ public:
     }
 
 private:
-    // ==============================
-    // 1. Tokenizer
-    // ==============================
     std::vector<Token> tokenize(const std::string & expr) {
         std::vector<Token> tokens;
         for (size_t i = 0; i < expr.size();) {
@@ -53,7 +50,6 @@ private:
                 ++i;
             }
             else {
-                // handle ** operator
                 if (expr[i] == '*' && i + 1 < expr.size() && expr[i + 1] == '*') {
                     tokens.push_back({ TokenType::Operator, "**" });
                     i += 2;
@@ -80,7 +76,7 @@ private:
                     tokens[i - 1].type == TokenType::Operator ||
                     tokens[i - 1].type == TokenType::LeftParen) {
 
-                    // 插入 0
+                    
                     tokens.insert(tokens.begin() + i, { TokenType::Number, "0" });
                     ++i;
                 }
@@ -88,9 +84,6 @@ private:
         }
     }
 
-    // ==============================
-    // 2. 优先级
-    // ==============================
     int precedence(const std::string & op) {
         if (op == "+" || op == "-") return 1;
         if (op == "*" || op == "/" || op == "%") return 2;
@@ -101,10 +94,6 @@ private:
     bool isRightAssociative(const std::string & op) {
         return (op == "^" || op == "**");
     }
-
-    // ==============================
-    // 3. 中缀转后缀
-    // ==============================
     std::vector<Token> infixToPostfix(const std::vector<Token> & tokens) {
         std::vector<Token> output;
         std::stack<Token> opStack;
@@ -152,10 +141,6 @@ private:
 
         return output;
     }
-
-    // ==============================
-    // 4. 后缀表达式计算
-    // ==============================
     double evaluatePostfix(const std::vector<Token> & postfix) {
         std::stack<double> st;
 
