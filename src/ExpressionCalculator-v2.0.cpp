@@ -42,7 +42,7 @@ public:
             tokens[1].value == "=") {
 
             std::string varName = tokens[0].value;
-            tokens.erase(tokens.begin(), tokens.begin() + 2);
+            tokens.erase(tokens.begin(), tokens.begin() + 2);//删除变量名和等号以保证形式统一
 
             auto postfix = infixToPostfix(tokens);
             double val = evaluatePostfix(postfix);
@@ -118,7 +118,7 @@ private:
         if (op == "==" || op == "!=") return 2;
         if (op == "&&") return 1;
         if (op == "||") return 0;
-        return -1;
+        return -1;//若全不是则会报错
     }
 
     bool isRightAssociative(const std::string& op) {
@@ -141,7 +141,7 @@ private:
                     ops.push(t); // 函数
                 }
                 else {
-                    output.push_back(t);
+                    output.push_back(t);//变量名或者特殊常量
                 }
             }
 
@@ -154,7 +154,7 @@ private:
                     (i == 0 ||
                         tokens[i - 1].type == TokenType::Operator ||
                         tokens[i - 1].type == TokenType::LeftParen)) {
-                    op = "u-";//单目负号
+                    op = "u-";//单目负号，相较于v-1.0而言是个改进
                 }
 
                 while (!ops.empty() &&
@@ -209,7 +209,7 @@ private:
         if (name == "ln") return log(x);
         if (name == "exp") return exp(x);
 
-        throw std::runtime_error("Unknown function: " + name);
+        throw std::runtime_error("Unknown function: " + name);//若皆不属于则会显示报错信息
     }//应用具体数学函数
 
     double applyOperator(const std::string& op,
@@ -244,18 +244,18 @@ private:
         for (const auto& t : postfix) {
 
             if (t.type == TokenType::Number)
-                st.push(std::stod(t.value));
+                st.push(std::stod(t.value));//完成到double的自动类型转换
 
             else if (t.type == TokenType::Identifier) {
                 if (variables.count(t.value))
-                    st.push(variables[t.value]);
+                    st.push(variables[t.value]);//变量转化为指代的数据
                 else if (t.value == "pi")
                     st.push(M_PI);
                 else if (t.value == "e")
                     st.push(M_E);
                 else {
                     double arg = st.top(); st.pop();
-                    st.push(applyFunction(t.value, arg));
+                    st.push(applyFunction(t.value, arg));//函数处理
                 }
             }
 
@@ -274,7 +274,7 @@ private:
                 }
 
                 double b = st.top(); st.pop();
-                double a = st.top(); st.pop();
+                double a = st.top(); st.pop();//这里的先后顺序不能颠倒，栈的存储特点决定了这种书写方式
                 st.push(applyOperator(t.value, a, b));
             }
         }

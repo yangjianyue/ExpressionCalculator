@@ -77,7 +77,7 @@ private:
                     tokens[i - 1].type == TokenType::LeftParen) {
 
                     
-                    tokens.insert(tokens.begin() + i, { TokenType::Number, "0" });
+                    tokens.insert(tokens.begin() + i, { TokenType::Number, "0" });//插入0以方便计算
                     ++i;
                 }
             }
