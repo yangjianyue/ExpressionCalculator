@@ -1,4 +1,26 @@
-calculator
-*.exe
+# 编译生成文件
 *.o
-build/
+*.obj
+*.out
+*.exe
+*.a
+*.lib
+*.so
+*.dll
+
+# 可执行文件
+calculator
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+
+# Mac
+.DS_Store
+
+# 临时文件
+*.log
+*.tmp
