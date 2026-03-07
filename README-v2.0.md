@@ -1,213 +1,52 @@
-# Design Document
-
-## 1. Overview
-
-This project implements a stack-based mathematical expression interpreter in C++.
-
-The design follows classic interpreter architecture principles and separates
-parsing logic from evaluation logic.
-
----
-
-## 2. System Architecture
-
-High-level processing pipeline:
-
-User Input (string)
-        ↓
-Tokenizer
-        ↓
-Infix → Postfix Conversion (Shunting Yard)
-        ↓
-Postfix Evaluation (Stack Machine)
-        ↓
-Result (double)
-
----
-
-## 3. Core Components
-
-### 3.1 Token System
-
-Tokens are categorized as:
-
-- Number
-- Operator
-- Identifier
-- LeftParen
-- RightParen
-
-This abstraction allows flexible expression parsing.
-
----
-
-### 3.2 Tokenizer
-
-Responsibility:
-- Convert raw input string into structured tokens
-- Recognize multi-character operators (`>=`, `<=`, `==`, `!=`, `&&`, `||`, `**`)
-- Distinguish between identifiers and functions
-
-Key techniques:
-- Character classification
-- Lookahead for multi-character operators
-
----
-
-### 3.3 Infix to Postfix Conversion
-
-Algorithm used:
-Shunting Yard Algorithm (Dijkstra)
-
-Responsibilities:
-- Handle operator precedence
-- Handle associativity (left / right)
-- Handle unary operators
-- Handle function calls
-- Handle parentheses
-
-Time complexity:
-O(n)
-
----
-
-### 3.4 Postfix Evaluation
-
-Execution model:
-Stack-based virtual machine
-
-Rules:
-- Numbers → push to stack
-- Operators → pop operands, compute, push result
-- Functions → pop argument(s), compute, push result
-
-This design simplifies expression evaluation logic.
-
----
-
-## 4. Operator System
-
-Operators are defined by:
-
-- precedence()
-- isRightAssociative()
-
-Supported categories:
-
-Arithmetic:
-+ - * / % **
-
-Comparison:
-> < >= <= == !=
-
-Logical:
-&& || !
-
-Unary:
-u- (internal representation)
-!
-
-Power operator (`**`) is right-associative.
-
----
-
-## 5. Symbol Table
-
-Variables are stored in:
-
-std::unordered_map<std::string, double>
-
-Assignment syntax:
-
-x = expression
-
-The symbol table persists for the lifetime of the Calculator instance.
-
----
-
-## 6. Function Dispatching
-
-Built-in functions are handled via:
-
-applyFunction(functionName, argument)
-
-Single-argument functions supported.
-
-Design allows easy extension by adding new function branches.
-
----
-
-## 7. Error Handling
-
-Current implementation:
-- Basic runtime error throwing
-- Assumes valid input format
-
-Future improvements:
-- Syntax validation
-- Mismatched parentheses detection
-- Undefined variable detection
-- Division by zero checks
-
----
-
-## 8. Design Principles
-
-- Encapsulation (Calculator class)
-- Separation of interface and implementation
-- Stack-based evaluation model
-- Extendable operator system
-- Deterministic parsing logic
-
----
-
-## 9. Limitations
-
-- Single-argument functions only
-- No AST representation
-- No type separation (bool/int/double unified)
-- No scope system
-- No user-defined functions
-
----
-
-## 10. Possible Enhancements
-
-Short-term:
-- Multi-argument functions
-- Error diagnostics
-
-Mid-term:
-- AST-based parser
-- Type system
-- Boolean type distinction
-
-Long-term:
-- Mini scripting language
-- Bytecode generation
-- JIT execution
-
----
-
-## 11. Educational Context
-
-This project approximates:
-
-- Expression evaluation engine
-- Simple interpreter core
-- Compiler construction fundamentals
-
-Concepts involved:
-
-- Tokenization
-- Operator precedence parsing
-- Stack machine execution
-- Symbol tables
-- Object-oriented design
-
----
-
-## 12. Conclusion
-
-This calculator serves as a foundational interpreter model
-and a stepping stone toward compiler or scripting language design.
+# Expression Calculator-v2.0
+这是一个使用 C++ 实现的命令行表达式计算器。程序可以解析并计算用户输入的数学表达式，支持算术运算、变量、函数、逻辑运算和比较运算。
+程序通过将 **中缀表达式转换为后缀表达式（逆波兰表达式）** 来完成计算，从而正确处理运算符优先级和括号。
+## 功能
+### 1 基本运算
+支持常见算术运算：
++  加法  
+-  减法  
+*  乘法  
+/  除法  
+** 幂运算  
+示例：
+2+3
+5*6
+2**3
+(1+2)*4
+### 2 变量
+可以定义变量并在后续表达式中使用。
+x=10  y=x*2  x+y
+输出：
+10  20  30
+### 3 数学函数
+支持常见数学函数：
+sin(x) cos(x) tan(x) sqrt(x) abs(x) log(x) ln(x) exp(x)
+示例：
+sqrt(16)
+sin(pi/2)
+log(100)
+### 4 数学常量
+程序内置常量：
+pi  e
+示例：
+sin(pi/2)  e**2
+### 5 比较运算
+< > >= <= == !=
+示例：
+5>3  4==2+2
+返回结果：
+1 true  0 false
+### 6 逻辑运算
+&&  ||  !
+示例：
+(3>2)&&(4>1)  !(5>3)
+### 7 一元运算
+支持负号：
+-5+2
+## 实现原理
+程序主要包含三个步骤：
+1. 词法分析：将字符串表达式拆分为 token  
+2. 表达式转换：将中缀表达式转换为后缀表达式  
+3. 表达式计算：使用栈计算后缀表达式  
+这种方法可以正确处理运算符优先级、括号以及函数调用。

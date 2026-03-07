@@ -1,238 +1,113 @@
-# Design Document
-
-## 1. Project Overview
-
-Expression Calculator is a command-line mathematical expression evaluator written in C++.  
-The system parses infix expressions entered by users and computes the result using a structured multi-stage processing pipeline.
-
-The primary design goals are:
-
-- Clear modular structure
-- Correct operator precedence handling
-- Support for parentheses and unary operators
-- Robust error handling
-- Clean and maintainable code design
-
----
-
-## 2. System Architecture
-
-The system follows a linear processing pipeline:
-
-
-Input String
-↓
-Tokenizer
-↓
-Infix to Postfix Converter (Shunting-yard Algorithm)
-↓
-Postfix Evaluator
-↓
-Result Output
-
-
-Each stage is separated into independent functions inside the `ExpressionCalculator` class to ensure modularity and maintainability.
-
----
-
-## 3. Core Components
-
-### 3.1 ExpressionCalculator Class
-
-The entire calculation logic is encapsulated in a single class:
-
-
-class ExpressionCalculator
-
-
-Responsibilities:
-
-- Orchestrate evaluation process
-- Manage tokenization
-- Convert infix to postfix
-- Evaluate postfix expression
-- Handle runtime errors
-
-Public Interface:
-
-
-double evaluate(const std::string& expr);
-
-
-This method serves as the entry point for expression evaluation.
-
----
-
-## 4. Algorithm Design
-
-### 4.1 Tokenization (Lexical Analysis)
-
-The tokenizer scans the input string character by character and produces a sequence of tokens:
-
-Token types:
-
-- Number
-- Operator
-- Left Parenthesis
-- Right Parenthesis
-
-Special Handling:
-
-- Floating-point numbers
-- Multi-character operator (`**`)
-- Unary operators (`+` and `-`)
-
-Unary operators are handled by inserting a `0` before them when necessary.
-
-Example:
-
-
--5 + 3
-
-
-Converted internally to:
-
-
-0 - 5 + 3
-
-
-This simplifies later evaluation logic.
-
----
-
-### 4.2 Infix to Postfix Conversion
-
-The project uses the **Shunting-yard algorithm**.
-
-Key rules:
-
-- Numbers → directly pushed to output
-- Operators → managed by precedence and associativity
-- Left parenthesis → pushed to stack
-- Right parenthesis → pop until matching left parenthesis
-
-Operator precedence:
-
-| Operator | Precedence |
-|----------|------------|
-| + -      | 1          |
-| * / %    | 2          |
-| ^ **     | 3          |
-
-Associativity:
-
-- `^` and `**` are right-associative
-- Others are left-associative
-
-This ensures correct mathematical evaluation order.
-
----
-
-### 4.3 Postfix Evaluation
-
-The postfix expression is evaluated using a stack-based algorithm.
-
-Algorithm:
-
-1. If token is number → push to stack
-2. If token is operator:
-   - Pop two operands
-   - Apply operation
-   - Push result back
-
-Final result remains as the single value in the stack.
-
-Time Complexity:  
-O(n), where n is the number of tokens.
-
----
-
-## 5. Error Handling Strategy
-
-The system uses `std::runtime_error` for runtime error detection.
-
-Handled errors include:
-
-- Division by zero
-- Modulo by zero
-- Mismatched parentheses
-- Invalid expression format
-- Unknown operators
-
-All exceptions are caught in `main()` and displayed as user-friendly messages.
-
----
-
-## 6. Design Decisions
-
-### 6.1 Why Postfix Instead of Direct Evaluation?
-
-Postfix evaluation:
-
-- Eliminates parentheses complexity
-- Simplifies precedence handling
-- Enables clean stack-based computation
-- Improves maintainability
-
-### 6.2 Why Use STL Containers?
-
-- `std::vector` → dynamic token storage
-- `std::stack` → operator and evaluation stack
-- `std::string` → safe string manipulation
-
-Using STL improves reliability and reduces manual memory management.
-
----
-
-## 7. Complexity Analysis
-
-| Stage | Time Complexity |
-|-------|------------------|
-| Tokenization | O(n) |
-| Infix → Postfix | O(n) |
-| Postfix Evaluation | O(n) |
-
-Overall Complexity:
-
-O(n)
-
-Space Complexity:
-
-O(n)
-
----
-
-## 8. Limitations
-
-- No support for variables
-- No support for functions like sin(), cos()
-- No implicit multiplication (e.g., 2(3+4))
-- No scientific notation parsing
-
----
-
-## 9. Possible Improvements
-
-Future enhancements may include:
-
-- Support for mathematical functions
-- Support for variables
-- Expression history
-- Unit testing module
-- CMake build system
-- GUI interface
-- Extensible operator registration
-
----
-
-## 10. Conclusion
-
-This project demonstrates:
-
-- Object-Oriented Design
-- Stack-based expression evaluation
-- Implementation of classical parsing algorithms
-- Structured error handling
-- Clean modular code architecture
-
-The design prioritizes correctness, clarity, and extensibility.
+# Expression Calculator-v1.0 设计说明
+## 1 项目目标
+本项目的目标是实现一个简单的 **表达式计算器程序**。
+用户可以输入数学表达式，程序会解析表达式并输出计算结果。
+程序需要能够处理：
+* 基本数学运算
+* 括号优先级
+* 小数
+* 一元运算符
+* 错误处理
+# 2 程序整体结构
+程序主要由以下几个部分组成：
+用户输入表达式
+        │
+        ▼
+表达式分词（Tokenize）
+        │
+        ▼
+中缀表达式 → 后缀表达式
+        │
+        ▼
+计算后缀表达式
+        │
+        ▼
+输出结果
+整个程序由 `ExpressionCalculator` 类完成主要计算逻辑。
+# 3 Token 设计
+程序首先会将输入的字符串表达式拆分为多个 **Token（表达式单元）**。
+Token 类型包括：
+| 类型         | 示例      |
+| ---------- | ------- |
+| Number     | 3, 4.5  |
+| Operator   | + - * / |
+| LeftParen  | (       |
+| RightParen | )       |
+例如表达式：
+3 + 5 * 2
+会被解析为：
+Number(3)
+Operator(+)
+Number(5)
+Operator(*)
+Number(2)
+# 4 一元运算处理
+程序支持一元运算符，例如：
+-5
++3
+为了方便计算，程序会将一元运算转换为普通运算，例如：
+-5  →  0 - 5
+这样可以使用同一套运算规则进行计算。
+# 5 运算符优先级
+程序为不同运算符设置了优先级：
+| 运算符   | 优先级 |
+| + -   | 1   |
+| * / % | 2   |
+| ^ **  | 3   |
+优先级越高，越先计算。
+例如：
+3 + 5 * 2
+会先计算：
+5 * 2
+# 6 中缀表达式转后缀表达式
+程序使用 **栈（stack）** 实现中缀表达式转后缀表达式。
+例如：
+中缀表达式：
+3 + 5 * 2
+转换为后缀表达式：
+3 5 2 * +
+这样可以方便计算机进行计算。
+# 7 后缀表达式计算
+计算后缀表达式时，同样使用栈结构：
+计算过程示例：
+3 5 2 * +
+步骤：
+push 3
+push 5
+push 2
+* → 5*2 = 10
++ → 3+10 = 13
+最终结果：13
+# 8 错误处理
+程序包含基本错误处理：
+* 除以 0
+* 取模 0
+* 括号不匹配
+* 表达式格式错误
+如果发生错误，程序会输出错误信息。
+示例：
+Error: Division by zero
+# 9 主程序流程
+主函数主要负责：
+1. 接收用户输入
+2. 调用计算器计算
+3. 输出结果
+4. 处理异常
+5. 循环运行直到用户退出
+流程如下：
+开始程序
+   │
+   ▼
+用户输入表达式
+   │
+   ▼
+调用 evaluate()
+   │
+   ▼
+输出结果
+   │
+   ▼
+继续输入或退出
+# 10 总结
+本项目实现了一个简单但完整的 **表达式计算系统**。
+通过对表达式进行分词、转换和计算，程序能够正确处理多种数学表达式。
