@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CALCULATOR_H
+#define CALCULATOR_H
+
 #include <string>
 #include <vector>
 
@@ -21,9 +23,14 @@ public:
 private:
     std::vector<Token> tokenize(const std::string& expr);
     void handleUnaryOperators(std::vector<Token>& tokens);
+
     int precedence(const std::string& op);
     bool isRightAssociative(const std::string& op);
+
     std::vector<Token> infixToPostfix(const std::vector<Token>& tokens);
     double evaluatePostfix(const std::vector<Token>& postfix);
+
     double applyOperator(double a, double b, const std::string& op);
 };
+
+#endif

@@ -1,4 +1,4 @@
-# Expression Calculator (C++)
+# Expression Calculator-v1.0
 ## 项目简介
 这是一个使用 **C++ 编写的命令行表达式计算器**。
 用户可以在终端中输入数学表达式，程序会自动解析并计算结果。

@@ -1,4 +1,5 @@
 #include <iostream>
+#include<string>
 #include "ExpressionCalculator-v1.0.h"
 
 int main() {
@@ -11,7 +12,8 @@ int main() {
         std::cout << "> ";
         std::getline(std::cin, input);
 
-        if (input == "exit") break;
+        if (input == "exit")
+            break;
 
         try {
             double result = calc.evaluate(input);

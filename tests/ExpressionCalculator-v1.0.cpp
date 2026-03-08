@@ -30,7 +30,7 @@ public:
 private:
     std::vector<Token> tokenize(const std::string & expr) {
         std::vector<Token> tokens;
-        for (size_t i = 0; i < expr.size();) {
+        for (size_t i = 0; i < expr.size();) {//expr的返回类型为size_t
             if (isspace(expr[i])) {
                 ++i;
             }
@@ -56,7 +56,7 @@ private:
                 }
                 else {
                     std::string op(1, expr[i]);
-                    tokens.push_back({ TokenType::Operator, op });
+                    tokens.push_back({ TokenType::Operator, op }); 
                     ++i;
                 }
             }
@@ -125,7 +125,7 @@ private:
                 }
 
                 if (opStack.empty())
-                    throw std::runtime_error("Mismatched parentheses");
+                    throw std::runtime_error("Mismatched parentheses");//左括号和右括号数量不匹配：右括号数量大于左括号
 
                 opStack.pop(); // remove '('
             }
@@ -133,7 +133,7 @@ private:
 
         while (!opStack.empty()) {
             if (opStack.top().type == TokenType::LeftParen)
-                throw std::runtime_error("Mismatched parentheses");
+                throw std::runtime_error("Mismatched parentheses");//左括号和右括号数量不匹配：左括号数量大于右括号
 
             output.push_back(opStack.top());
             opStack.pop();

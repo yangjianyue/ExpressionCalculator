@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <vector>
 #include <stack>
 #include <unordered_map>
@@ -48,10 +49,10 @@ public:
             double val = evaluatePostfix(postfix);
             variables[varName] = val;
             return val;
-        }
+        }//规定了变量定义应该在其被使用之前
 
         auto postfix = infixToPostfix(tokens);
-        return evaluatePostfix(postfix);
+        return evaluatePostfix(postfix);//不是复制则直接转后缀表达式
     }
 
 private:
@@ -291,9 +292,9 @@ int main() {
 
     while (true) {
         std::cout << "> ";
-        std::getline(std::cin, line);
+        std::getline(std::cin, input);
 
-        if (line == "exit")
+        if (input == "exit")
             break;
 
         try {
